@@ -13,6 +13,9 @@ use \Magento\Config\Console\Command\EmulatedAdminhtmlAreaProcessor;
 use \CertificationPrep\AreaCode\Model\TestModel;
 use \CertificationPrep\AreaCode\Model\TestModelFactory;
 
+// ! Important. How to use this Emulation?
+use Magento\Store\Model\App\Emulation;
+
 class NullAreaCodeInCLI extends Command
 {
     private $state;
@@ -88,8 +91,8 @@ You’ll need to use Magento’s App State object to manually set an area code.'
         // It is interesting behavior because I expected $this will not be available in function scope
         $self = $this;
         $callback = function(string $message, \CertificationPrep\AreaCode\Model\TestModel $diArgumentsData) use ($output, $input, $self) {
-            $area = $this->areaList->getArea($this->state->getAreaCode());
-            $area->load(\Magento\Framework\App\AreaInterface::PART_CONFIG);
+//            $area = $this->areaList->getArea($this->state->getAreaCode());
+//            $area->load(\Magento\Framework\App\AreaInterface::PART_CONFIG);
 
             $output->writeln('-------------From closure-----------------------------------');
             $output->writeln($message . $this->state->getAreaCode());
