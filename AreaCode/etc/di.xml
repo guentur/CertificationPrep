@@ -8,4 +8,18 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Framework\App\AreaList">
+        <arguments>
+            <argument name="areas" xsi:type="array">
+                <item name="customarea" xsi:type="null"/>
+<!--                <item name="customarea" xsi:type="array">-->
+<!--                    <item name="frontNameResolver" xsi:type="string">Magento\Backend\App\Area\FrontNameResolver</item>-->
+<!--                    <item name="router" xsi:type="string">admin</item>-->
+<!--                    <item name="frontName" xsi:type="string">admin</item>-->
+<!--                </item>-->
+            </argument>
+        </arguments>
+    </type>
+
 </config>
