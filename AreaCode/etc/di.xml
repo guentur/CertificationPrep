@@ -22,4 +22,15 @@
         </arguments>
     </type>
 
+    <type name="CertificationPrep\AreaCode\Model\TestModel">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="associative_array" xsi:type="array">
+                    <item name="from_global" xsi:type="string">It is from global</item>
+                    <item name="second" xsi:type="string">it is second param from global</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
