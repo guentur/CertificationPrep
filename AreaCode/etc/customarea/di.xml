@@ -5,12 +5,12 @@
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="associative_array" xsi:type="array">
-                    <item name="first" xsi:type="string">from custom area</item>
-                    <item name="second" xsi:type="string">from custom area</item>
+                    <item name="first" xsi:type="string">from CUSTOM area</item>
+                    <item name="second" xsi:type="string">from CUSTOM area</item>
                     <item name="third" xsi:type="array">
                         <item name="associative_array" xsi:type="array">
-                            <item name="first" xsi:type="string">from custom area</item>
-                            <item name="second" xsi:type="string">from custom area</item>
+                            <item name="first" xsi:type="string">from CUSTOM area</item>
+                            <item name="second" xsi:type="string">from CUSTOM area</item>
                         </item>
                     </item>
                 </item>

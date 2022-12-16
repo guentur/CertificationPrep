@@ -2,6 +2,7 @@
 
 namespace CertificationPrep\AreaCode\Console\Command;
 
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,6 +25,10 @@ class NullAreaCodeInCLI extends Command
 
     private $testModel;
 
+    private $diConfigLoader;
+
+    private $objectManager;
+
     private $testModelFactory;
 
     private $emulatedAdminhtmlAreaProcessor;
@@ -39,6 +44,8 @@ class NullAreaCodeInCLI extends Command
         State $state,
         AreaList $areaList,
         TestModel $testModel,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        ConfigLoaderInterface $diConfigLoader,
         TestModelFactory $testModelFactory,
         EmulatedAdminhtmlAreaProcessor $emulatedAdminhtmlAreaProcessor,
         string $name = null
@@ -47,6 +54,8 @@ class NullAreaCodeInCLI extends Command
         $this->state = $state;
         $this->areaList = $areaList;
         $this->testModel = $testModel;
+        $this->objectManager = $objectManager;
+        $this->diConfigLoader = $diConfigLoader;
         $this->testModelFactory = $testModelFactory;
         $this->emulatedAdminhtmlAreaProcessor = $emulatedAdminhtmlAreaProcessor;
     }
@@ -91,21 +100,29 @@ You’ll need to use Magento’s App State object to manually set an area code.'
         // It is interesting behavior because I expected $this will not be available in function scope
         $self = $this;
         $callback = function(string $message, \CertificationPrep\AreaCode\Model\TestModel $diArgumentsData) use ($output, $input, $self) {
+            /**
+             * as Magento\Framework\App\Area caches part code @see \Magento\Framework\App\Area::_loadPart
+             * but ObjectManager remains with previous rendered configuration
+             * in this example I get data from CUSTOM area code when on the third emulation call.
+             *
+             * It is better to use $this->objectManager->configure($this->diConfigLoader->load($this->state->getAreaCode())); directly
+             */
 //            $area = $this->areaList->getArea($this->state->getAreaCode());
 //            $area->load(\Magento\Framework\App\AreaInterface::PART_CONFIG);
+            $this->objectManager->configure($this->diConfigLoader->load($this->state->getAreaCode()));
 
             $output->writeln('-------------From closure-----------------------------------');
             $output->writeln($message . $this->state->getAreaCode());
 
             $output->writeln('FIRST');
             $output->writeln('-------------From closure-----------------------------------');
-            $testModelInstance = $self->testModelFactory->create();
+            $testModelInstance = $this->testModelFactory->create();
             $result = $testModelInstance->getData();
             var_dump($result);
 
             $output->writeln('SECOND');
             $output->writeln('-------------From closure-----------------------------------');
-            var_dump($self->testModel->getData());
+            var_dump($this->testModel->getData());
 
             $output->writeln('THIRD');
             $output->writeln('-------------From closure-----------------------------------');
@@ -114,20 +131,23 @@ You’ll need to use Magento’s App State object to manually set an area code.'
             return $result;
         };
 
-        $output->writeln($emulationNumber = 'FOURTH');
+        $output->writeln('EMULATION FIRST');
         $output->writeln('------------------------------------------------');
         $this->state->emulateAreaCode(
             Area::AREA_ADMINHTML,
             $callback,
             $paramToEmulation
         );
+        $output->writeln('EMULATION SECOND');
         $output->writeln('------------------------------------------------');
         $this->state->emulateAreaCode('customarea', $callback, $paramToEmulation);
 
+        $output->writeln('EMULATION THIRD');
         $output->writeln('------------------------------------------------');
         // Why it sets scope->setCurrentScope(Area::AREA_ADMINHTML) in
         $this->emulatedAdminhtmlAreaProcessor->process($callback, $paramToEmulation);
 
+        $output->writeln('EMULATION FOUR');
         $this->state->setAreaCode(Area::AREA_ADMINHTML);
         $testModelInstance = $self->testModelFactory->create();
         $output->writeln('-------------$this->state->setAreaCode(Area::AREA_ADMINHTML);-----------------------------------');
